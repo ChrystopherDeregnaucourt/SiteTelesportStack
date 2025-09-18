@@ -99,9 +99,10 @@ export class HomeComponent implements OnInit {
 
         // Dessiner le label
         const label = data.labels?.[index] ?? 'Unknown';
+        const labelText = Array.isArray(label) ? label.join(' ') : String(label);
         ctx.textBaseline = 'middle';
         ctx.textAlign = isRightSide ? 'left' : 'right';
-        ctx.fillText(label, horizontalLineX + (isRightSide ? 10 : -10), lineEndY);
+        ctx.fillText(labelText, horizontalLineX + (isRightSide ? 10 : -10), lineEndY);
       });
 
       ctx.restore();
