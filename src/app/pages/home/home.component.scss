@@ -84,14 +84,15 @@
 }
 
 .chart-card {
-  width: min(100%, 560px);
+  width: min(100%, 700px);
   margin: 2rem auto 0;
+  padding: 2rem;
 }
 
 .chart-card__canvas {
   position: relative;
   width: 100%;
-  min-height: clamp(260px, 55vw, 400px);
+  min-height: clamp(300px, 50vw, 450px);
 }
 
 .chart-card__canvas canvas {
@@ -120,10 +121,11 @@
 
   .chart-card {
     width: 100%;
+    padding: 1rem;
   }
 
   .chart-card__canvas {
-    min-height: clamp(240px, 65vw, 320px);
+    min-height: clamp(280px, 60vw, 350px);
   }
 
   .chart-card {
