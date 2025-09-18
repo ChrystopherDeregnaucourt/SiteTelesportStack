@@ -59,66 +59,75 @@ export class HomeComponent implements OnInit {
 
   private readonly calloutLabelsPlugin: Plugin<'pie'> = {
     id: 'pieCalloutLabels',
-    afterDraw: (chart) => {
+    afterDatasetsDraw: (chart) => {
       const { ctx, data, chartArea, canvas } = chart;
-      const dataset = data.datasets[0];
-      const meta = chart.getDatasetMeta(0);
-
-      if (!dataset || !meta?.data.length || !chartArea) {
+      
+      if (!data.datasets[0] || !chartArea) {
         return;
       }
 
+      const meta = chart.getDatasetMeta(0);
+      const dataset = data.datasets[0];
+
       ctx.save();
-      ctx.font = "500 14px 'Poppins', 'Segoe UI', Arial, sans-serif";
+      
+      // Style des lignes
       ctx.fillStyle = '#1f2937';
       ctx.strokeStyle = '#94a3b8';
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 1;
+      ctx.font = "500 12px 'Poppins', sans-serif";
 
       meta.data.forEach((element, index) => {
-        const props = element.getProps(['x', 'y', 'startAngle', 'endAngle', 'outerRadius'], true);
-        const { x, y, startAngle, endAngle, outerRadius } = props;
+        const model = element;
+        const centerX = model.x;
+        const centerY = model.y;
+        const radius = model.outerRadius;
+        const startAngle = model.startAngle;
+        const endAngle = model.endAngle;
 
-        // Angle du milieu de la section
+        // Calculer l'angle du milieu de la section
         const angle = (startAngle + endAngle) / 2;
 
         // Point de départ sur le bord du camembert
-        const lineStartX = x + Math.cos(angle) * outerRadius;
-        const lineStartY = y + Math.sin(angle) * outerRadius;
+        const lineStartX = centerX + Math.cos(angle) * radius;
+        const lineStartY = centerY + Math.sin(angle) * radius;
 
-        // Point intermédiaire (ligne diagonale)
-        const lineLength = 30;
-        const midX = lineStartX + Math.cos(angle) * lineLength;
-        const midY = lineStartY + Math.sin(angle) * lineLength;
+        // Point final de la ligne diagonale
+        const diagonalLength = 40;
+        const diagonalEndX = lineStartX + Math.cos(angle) * diagonalLength;
+        const diagonalEndY = lineStartY + Math.sin(angle) * diagonalLength;
 
-        // Déterminer le côté (droite ou gauche)
+        // Déterminer si on est à droite ou à gauche
         const isRightSide = Math.cos(angle) >= 0;
-        
-        // Point final (ligne horizontale)
-        const horizontalLength = 40;
-        const endX = isRightSide ? midX + horizontalLength : midX - horizontalLength;
-        const endY = midY;
+
+        // Point final de la ligne horizontale
+        const horizontalLength = 30;
+        const finalX = isRightSide ? 
+          diagonalEndX + horizontalLength : 
+          diagonalEndX - horizontalLength;
+        const finalY = diagonalEndY;
 
         // Dessiner la ligne diagonale
         ctx.beginPath();
         ctx.moveTo(lineStartX, lineStartY);
-        ctx.lineTo(midX, midY);
+        ctx.lineTo(diagonalEndX, diagonalEndY);
         ctx.stroke();
 
         // Dessiner la ligne horizontale
         ctx.beginPath();
-        ctx.moveTo(midX, midY);
-        ctx.lineTo(endX, endY);
+        ctx.moveTo(diagonalEndX, diagonalEndY);
+        ctx.lineTo(finalX, finalY);
         ctx.stroke();
 
-        // Afficher le label
-        const label = data.labels?.[index] ?? 'Unknown';
-        const labelText = Array.isArray(label) ? label.join(' ') : String(label || '');
-        
+        // Dessiner le label
+        const label = data.labels?.[index] || '';
+        const labelText = String(label);
+
         ctx.textBaseline = 'middle';
         ctx.textAlign = isRightSide ? 'left' : 'right';
-        
-        const textX = isRightSide ? endX + 8 : endX - 8;
-        ctx.fillText(labelText, textX, endY);
+
+        const textX = isRightSide ? finalX + 5 : finalX - 5;
+        ctx.fillText(labelText, textX, finalY);
       });
 
       ctx.restore();
@@ -132,7 +141,8 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void
   {
-    Chart.register(ChartDataLabels, this.calloutLabelsPlugin);
+    // Enregistrer le plugin personnalisé
+    Chart.register(this.calloutLabelsPlugin);
 
     this.olympics$ = this.olympicService.getOlympics().pipe
     (
