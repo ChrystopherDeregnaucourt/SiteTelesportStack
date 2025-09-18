@@ -85,7 +85,7 @@
 
 .chart-card {
   width: min(100%, 560px);
-  margin: 0 auto;
+  margin: 2rem auto 0;
 }
 
 .chart-card__canvas {
@@ -97,6 +97,11 @@
 .chart-card__canvas canvas {
   width: 100% !important;
   height: 100% !important;
+  max-width: 100%;
+}
+
+.dashboard__chart {
+  overflow-x: auto;
 }
 
 .loading {
@@ -119,5 +124,9 @@
 
   .chart-card__canvas {
     min-height: clamp(240px, 65vw, 320px);
+  }
+
+  .chart-card {
+    margin: 1rem auto 0;
   }
 }

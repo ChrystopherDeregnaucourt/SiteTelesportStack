@@ -60,13 +60,19 @@ export class HomeComponent implements OnInit {
   private readonly calloutLabelsPlugin: Plugin<'pie'> = {
     id: 'pieCalloutLabels',
     afterDatasetsDraw: (chart) => {
-      const { ctx, data, chartArea } = chart;
+      const { ctx, data, chartArea, canvas } = chart;
       const dataset = data.datasets[0];
       const meta = chart.getDatasetMeta(0);
 
       if (!dataset || !meta?.data.length || !chartArea) {
         return;
       }
+
+      // Calcul des dimensions responsives
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+      const isMobile = canvasWidth < 600;
+      const labelOffset = isMobile ? 15 : 25;
 
       meta.data.forEach((element, index) => {
         const {
@@ -78,26 +84,35 @@ export class HomeComponent implements OnInit {
         } = element.getProps(['x', 'y', 'startAngle', 'endAngle', 'outerRadius'], true);
 
         const angle = (startAngle + endAngle) / 2;
-        const radialGap = 0;
-        const labelMargin = 32;
-        const { left: chartLeft, right: chartRight } = chartArea;
+        const radialGap = isMobile ? 5 : 10;
+        
+        // Points de départ et intermédiaire
         const startX = centerX + Math.cos(angle) * outerRadius;
         const startY = centerY + Math.sin(angle) * outerRadius;
-        const middleX = centerX + Math.cos(angle) * (outerRadius + radialGap);
-        const middleY = centerY + Math.sin(angle) * (outerRadius + radialGap);
+        const middleX = centerX + Math.cos(angle) * (outerRadius + radialGap + labelOffset);
+        const middleY = centerY + Math.sin(angle) * (outerRadius + radialGap + labelOffset);
+        
+        // Déterminer le côté et calculer la position finale
         const isRightSide = Math.cos(angle) >= 0;
-        const endX = isRightSide
-          ? chartRight + labelMargin
-          : chartLeft - labelMargin;
+        const labelMargin = isMobile ? 80 : 120;
+        
+        let endX: number;
+        if (isRightSide) {
+          endX = Math.max(middleX + labelMargin, centerX + outerRadius + labelMargin);
+        } else {
+          endX = Math.min(middleX - labelMargin, centerX - outerRadius - labelMargin);
+        }
+        
         const endY = middleY;
 
+        // Dessiner la ligne de connexion
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(startX, startY);
         ctx.lineTo(middleX, middleY);
-        ctx.lineTo(endX - 215, endY);
+        ctx.lineTo(endX, endY);
         ctx.strokeStyle = '#94a3b8';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = isMobile ? 1.5 : 2;
         ctx.stroke();
 
         const label = data.labels?.[index] ?? 'Unknown';
@@ -107,7 +122,7 @@ export class HomeComponent implements OnInit {
         ctx.fillStyle = '#1f2937';
         ctx.textBaseline = 'middle';
         ctx.textAlign = isRightSide ? 'left' : 'right';
-        ctx.fillText(text, endX + (isRightSide ? -200 : 200), endY);
+        ctx.fillText(text, endX + (isRightSide ? 10 : -10), endY);
         ctx.restore();
       });
     },
