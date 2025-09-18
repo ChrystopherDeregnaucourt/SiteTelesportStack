@@ -9,6 +9,7 @@ import {
   Chart,
   Plugin,
   TooltipItem,
+  ArcElement,
 } from 'chart.js';
 
 @Component({
@@ -78,7 +79,7 @@ export class HomeComponent implements OnInit {
       ctx.font = "500 12px 'Poppins', sans-serif";
 
       meta.data.forEach((element, index) => {
-        const model = element;
+        const model = element as ArcElement;
         const centerX = model.x;
         const centerY = model.y;
         const radius = model.outerRadius;
