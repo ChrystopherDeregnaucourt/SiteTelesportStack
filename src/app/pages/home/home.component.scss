@@ -1,0 +1,123 @@
+:host {
+  display: block;
+  min-height: 100%;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  background: linear-gradient(135deg, #f4f7ff 0%, #ffffff 60%);
+  color: #1f2937;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 2.5vw, 2.5rem);
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.dashboard__header {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: clamp(1.5rem, 2vw, 2.5rem);
+}
+
+.dashboard__title {
+  margin: 0;
+  padding: 0.5rem 1.25rem;
+  font-size: clamp(1.5rem, 2.3vw, 2.25rem);
+  text-align: center;
+  font-weight: 600;
+  color: white;
+  background-color: #04838f;
+  border-radius: 0.75rem;
+}
+
+.dashboard__subtitle {
+  margin: 0.5rem 0 0;
+  max-width: 30rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #475569;
+}
+
+.dashboard__stats {
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5rem;
+  
+}
+
+.stat-card {
+  min-width: 180px;
+  padding: 1.25rem 1.75rem;
+  border-radius: 1.25rem;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  text-align: center;
+  border: 2px solid #04838f; /* bleu */
+}
+
+.stat-card__label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #64748b;
+}
+
+.stat-card__value {
+  font-size: clamp(2rem, 3vw, 2.75rem);
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dashboard__chart {
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-card {
+  width: min(100%, 560px);
+  margin: 0 auto;
+}
+
+.chart-card__canvas {
+  position: relative;
+  width: 100%;
+  min-height: clamp(260px, 55vw, 400px);
+}
+
+.chart-card__canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.loading {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 1.05rem;
+  color: #475569;
+}
+
+@media (max-width: 720px) {
+  .stat-card {
+    width: 100%;
+    min-width: unset;
+    text-align: center;
+  }
+
+  .chart-card {
+    width: 100%;
+  }
+
+  .chart-card__canvas {
+    min-height: clamp(240px, 65vw, 320px);
+  }
+}

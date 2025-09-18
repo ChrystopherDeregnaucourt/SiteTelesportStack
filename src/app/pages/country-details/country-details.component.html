@@ -1,0 +1,7 @@
+<h1>Détails du pays</h1>
+<div *ngIf="viewModel$ | async as vm">
+  <h2>{{ vm.countryName }}</h2>
+  <p>Nombre de participations : {{ vm.metrics.entries }}</p>
+  <p>Nombre de médailles : {{ vm.metrics.medals }}</p>
+  <p>Nombre d’athlètes : {{ vm.metrics.athletes }}</p>
+</div>
