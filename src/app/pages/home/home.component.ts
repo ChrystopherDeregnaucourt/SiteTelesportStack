@@ -79,12 +79,12 @@ export class HomeComponent implements OnInit {
       ctx.font = "500 12px 'Poppins', sans-serif";
 
       meta.data.forEach((element, index) => {
-        const model = element as ArcElement;
-        const centerX = model.x;
-        const centerY = model.y;
-        const radius = model.outerRadius;
-        const startAngle = model.startAngle;
-        const endAngle = model.endAngle;
+        const arc = element as any;
+        const centerX = arc.x;
+        const centerY = arc.y;
+        const radius = arc.outerRadius;
+        const startAngle = arc.startAngle;
+        const endAngle = arc.endAngle;
 
         // Calculer l'angle du milieu de la section
         const angle = (startAngle + endAngle) / 2;
