@@ -69,40 +69,56 @@ export class HomeComponent implements OnInit {
       }
 
       ctx.save();
-      ctx.font = "600 16px 'Poppins', 'Segoe UI', Arial, sans-serif";
+      ctx.font = "500 14px 'Poppins', 'Segoe UI', Arial, sans-serif";
       ctx.fillStyle = '#1f2937';
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.5;
 
       meta.data.forEach((element, index) => {
-        const { x, y, startAngle, endAngle, outerRadius } = element.getProps(['x', 'y', 'startAngle', 'endAngle', 'outerRadius'], true);
+        const props = element.getProps(['x', 'y', 'startAngle', 'endAngle', 'outerRadius'], true);
+        const { x, y, startAngle, endAngle, outerRadius } = props;
 
-        // Calculer l'angle du milieu de la section
+        // Angle du milieu de la section
         const angle = (startAngle + endAngle) / 2;
 
-        // Points de la ligne
+        // Point de départ sur le bord du camembert
         const lineStartX = x + Math.cos(angle) * outerRadius;
         const lineStartY = y + Math.sin(angle) * outerRadius;
-        const lineEndX = x + Math.cos(angle) * (outerRadius + 40);
-        const lineEndY = y + Math.sin(angle) * (outerRadius + 40);
 
-        // Déterminer si on est à droite ou à gauche
+        // Point intermédiaire (ligne diagonale)
+        const lineLength = 30;
+        const midX = lineStartX + Math.cos(angle) * lineLength;
+        const midY = lineStartY + Math.sin(angle) * lineLength;
+
+        // Déterminer le côté (droite ou gauche)
         const isRightSide = Math.cos(angle) >= 0;
-        const horizontalLineX = isRightSide ? lineEndX + 30 : lineEndX - 30;
+        
+        // Point final (ligne horizontale)
+        const horizontalLength = 40;
+        const endX = isRightSide ? midX + horizontalLength : midX - horizontalLength;
+        const endY = midY;
 
-        // Dessiner la ligne
+        // Dessiner la ligne diagonale
         ctx.beginPath();
         ctx.moveTo(lineStartX, lineStartY);
-        ctx.lineTo(lineEndX, lineEndY);
-        ctx.lineTo(horizontalLineX, lineEndY);
-        ctx.strokeStyle = '#94a3b8';
-        ctx.lineWidth = 2;
+        ctx.lineTo(midX, midY);
         ctx.stroke();
 
-        // Dessiner le label
+        // Dessiner la ligne horizontale
+        ctx.beginPath();
+        ctx.moveTo(midX, midY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+
+        // Afficher le label
         const label = data.labels?.[index] ?? 'Unknown';
-        const labelText = Array.isArray(label) ? label.join(' ') : String(label);
+        const labelText = Array.isArray(label) ? label.join(' ') : String(label || '');
+        
         ctx.textBaseline = 'middle';
         ctx.textAlign = isRightSide ? 'left' : 'right';
-        ctx.fillText(labelText, horizontalLineX + (isRightSide ? 10 : -10), lineEndY);
+        
+        const textX = isRightSide ? endX + 8 : endX - 8;
+        ctx.fillText(labelText, textX, endY);
       });
 
       ctx.restore();
